@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5000");
+const socket = io(`http://${import.meta.env.VITE_HOST_URL}:5000`);
 
 function Player() {
     const [joined, setJoined] = useState(false);
@@ -89,13 +89,17 @@ function Player() {
                     </div>
 
                     <div className="card mb-4">
-                        <div className="card-header">Submit Evidence/Argument</div>
+                        <div className="card-header">
+                            Submit Evidence/Argument
+                        </div>
                         <div className="card-body">
                             <textarea
                                 rows="3"
                                 placeholder="Enter your evidence or argument..."
                                 value={evidenceText}
-                                onChange={(e) => setEvidenceText(e.target.value)}
+                                onChange={(e) =>
+                                    setEvidenceText(e.target.value)
+                                }
                                 className="form-control mb-3"
                             />
                             <button

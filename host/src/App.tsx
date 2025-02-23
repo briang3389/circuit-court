@@ -6,12 +6,11 @@ import { GamePhase, Role, Speaker } from "./types";
 import SceneDisplay from "./SceneDisplay";
 
 // host backend socket
-const socket = io("http://localhost:5000");
+const socket = io(`http://${import.meta.env.VITE_HOST_URL}:5000`);
 
 type TranscriptEntry = {
     role: Speaker;
     text: string;
-    t: number;
 };
 
 export default function App() {
@@ -36,45 +35,47 @@ export default function App() {
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
-    
+
         const handlePlaying = () => {
-          if (!musicAllowed) {
-            setMusicAllowed(true);
-          }
+            if (!musicAllowed) {
+                setMusicAllowed(true);
+            }
         };
-    
+
         audio.addEventListener("playing", handlePlaying);
-    
+
         return () => {
-          audio.removeEventListener("playing", handlePlaying);
+            audio.removeEventListener("playing", handlePlaying);
         };
-      }, [musicAllowed]);
+    }, [musicAllowed]);
 
     useEffect(() => {
         if (audioRef.current && musicAllowed) {
-          // Pause current playback.
-          audioRef.current.pause();
-    
-          // Set source based on the gameStarted state.
-          audioRef.current.src = gameStarted ? "/game_music.mp3" : "/lobby_music.mp3";
-    
-          // Reload the new source and play.
-          audioRef.current.load();
-          audioRef.current.play().catch((err) =>
-            console.log("Playback prevented:", err)
-          );
+            // Pause current playback.
+            audioRef.current.pause();
+
+            // Set source based on the gameStarted state.
+            audioRef.current.src = gameStarted
+                ? "/game_music.mp3"
+                : "/lobby_music.mp3";
+
+            // Reload the new source and play.
+            audioRef.current.load();
+            audioRef.current
+                .play()
+                .catch((err) => console.log("Playback prevented:", err));
         }
-      }, [gameStarted, musicAllowed]);
-    
+    }, [gameStarted, musicAllowed]);
+
     const handleMusicStart = () => {
         setMusicAllowed(true);
         // Attempt to play the current track immediately.
         if (audioRef.current) {
-          audioRef.current
-            .play()
-            .catch((err) => console.log("Playback prevented:", err));
+            audioRef.current
+                .play()
+                .catch((err) => console.log("Playback prevented:", err));
         }
-      };
+    };
 
     useEffect(() => {
         socket.emit("createSession");
@@ -96,7 +97,6 @@ export default function App() {
             transcriptAppend({
                 role: "Judge",
                 text: data.scenario,
-                t: Date.now(),
             });
         });
 
@@ -111,20 +111,17 @@ export default function App() {
                     transcriptAppend({
                         role: "Defense",
                         text: text,
-                        t: Date.now(),
                     });
                 } else if (data.activeRole == "Defense") {
                     transcriptAppend({
                         role: "Prosecutor",
                         text: text,
-                        t: Date.now(),
                     });
                 } else {
                     // last
                     transcriptAppend({
                         role: "Judge",
                         text: text,
-                        t: Date.now(),
                     });
                 }
             }
@@ -145,7 +142,6 @@ export default function App() {
             transcriptAppend({
                 role: "Judge",
                 text: data.llmThoughts,
-                t: Date.now(),
             });
 
             //queueMessage(data.llmThoughts, "Judge");
@@ -157,7 +153,6 @@ export default function App() {
             transcriptAppend({
                 role: "Judge",
                 text: data.verdict,
-                t: Date.now(),
             });
         });
 
@@ -186,19 +181,19 @@ export default function App() {
             <audio ref={audioRef} loop />
             {!musicAllowed && (
                 <div
-                onClick={handleMusicStart}
-                style={{
-                    position: "absolute",
-                    top: 10,
-                    left: 10,
-                    cursor: "pointer",
-                    zIndex: 1000,
-                    backgroundColor: "rgba(255,255,255,0.7)",
-                    padding: "5px",
-                    borderRadius: "50%",
-                }}
+                    onClick={handleMusicStart}
+                    style={{
+                        position: "absolute",
+                        top: 10,
+                        left: 10,
+                        cursor: "pointer",
+                        zIndex: 1000,
+                        backgroundColor: "rgba(255,255,255,0.7)",
+                        padding: "5px",
+                        borderRadius: "50%",
+                    }}
                 >
-                🔇
+                    🔇
                 </div>
             )}
             <SceneDisplay
@@ -208,15 +203,15 @@ export default function App() {
             <div className="w-screen h-screen flex flex-col items-center">
                 {!gameStarted ? (
                     <>
-                        <h1 className="text-7xl font-big text-center m-10 bg-blue-400 w-full p-2 border-amber-300 border-y-8">
+                        <h1 className="text-7xl font-big text-center m-10 bg-[#7CAFC4] w-full p-2 border-amber-300 border-y-8">
                             Circuit Court
                         </h1>
                         <div className="h-[40%]"></div>
-                        <p className="text-5xl bold py-4 px-8 m-8 bg-blue-400 rounded-2xl">
+                        <p className="text-5xl bold py-4 px-8 m-8 bg-[#7CAFC4] rounded-2xl">
                             Join Code: {joinCode}
                         </p>
 
-                        <p className="text-3xl py-4 px-8 bg-blue-400 rounded-2xl">
+                        <p className="text-3xl py-4 px-8 bg-[#7CAFC4] rounded-2xl">
                             Prosecutor:{" "}
                             {players.includes("Prosecutor") ? (
                                 <span className="text-green-700">Joined!</span>
@@ -234,11 +229,13 @@ export default function App() {
                     </>
                 ) : (
                     <>
-                        <div className="w-max text-4xl h-[25%] m-8 p-8 bg-white rounded-[70px]">
-                            {speechText}
+                        <div className="m-4 px-8 py-6 bg-white rounded-[70px]">
+                            <p className="text-3xl leading-none indent-8">
+                                {speechText}
+                            </p>
                         </div>
                         <div className="grow"></div>
-                        <div className="bg-blue-300 px-8 py-3 my-3 text-3xl rounded-2xl">
+                        <div className="bg-[#7CAFC4] px-8 py-3 my-4 text-5xl rounded-2xl">
                             Round {roundNumber} -{" "}
                             {transcript.length % 3 == 0 &&
                             transcript.length != 0 ? (
@@ -252,47 +249,6 @@ export default function App() {
                         </div>
                     </>
                 )}
-            </div>
-            <div className="p-5">
-                <h1>Courtroom Showdown – Host</h1>
-                <section>
-                    <h2>Session Details</h2>
-                    <p>
-                        <strong>Join Code (Session ID):</strong> {joinCode}
-                    </p>
-                </section>
-
-                <section>
-                    <h2>Players</h2>
-                    <ul>
-                        {players.map((role, idx) => (
-                            <li key={idx}>{role}</li>
-                        ))}
-                    </ul>
-                </section>
-
-                <section>
-                    <h2>Transcript</h2>
-                    {transcript.length === 0 ? (
-                        <p>No submissions yet.</p>
-                    ) : (
-                        <ul>
-                            {transcript.map((entry, idx) => (
-                                <li key={idx}>
-                                    <strong>Round N - {entry.role}:</strong>{" "}
-                                    {entry.text}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </section>
-
-                <section>
-                    <h2>Current Turn</h2>
-                    <p>
-                        <strong>Active Role:</strong> {activeRole}
-                    </p>
-                </section>
             </div>
         </>
     );

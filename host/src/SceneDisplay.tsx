@@ -37,8 +37,8 @@ let judge_idle_anim: AnimationGroup;
 let judge_talking_anim: AnimationGroup;
 
 let player_d: Mesh;
-const PLAYER_D_POS = new Vector3(-14, 0, 7);
 let player_p: Mesh;
+const PLAYER_D_POS = new Vector3(-14, 0, 7);
 const PLAYER_P_POS = new Vector3(14, 0, 7);
 
 export default function SceneDisplay({
@@ -56,7 +56,7 @@ export default function SceneDisplay({
         scene.clearColor = Color4.FromColor3(Color3.White());
         scene.ambientColor = Color3.Red();
 
-        camera = new FreeCamera("camera", Vector3.Zero(), scene);
+        camera = new FreeCamera("camera", new Vector3(0, 20, 0), scene);
 
         const hemi_light = new HemisphericLight(
             "hemi light",
@@ -99,7 +99,7 @@ export default function SceneDisplay({
             // animations
             judge_idle_anim = container.animationGroups[0];
             judge_idle_anim.loopAnimation = true;
-            judge_idle_anim.play();
+            judge_idle_anim.play(true);
             judge_talking_anim = container.animationGroups[1];
             judge_talking_anim.loopAnimation = true;
 
@@ -109,22 +109,26 @@ export default function SceneDisplay({
         {
             // loading person model
             const container = await LoadAssetContainerAsync(
-                "/models/person.glb",
+                "/models/player.glb",
                 scene
             );
 
-            const person = new Mesh("person", scene);
+            const talking_anim = container.animationGroups[1];
+            talking_anim.loopAnimation = true;
+            talking_anim.play(true);
+
+            const player = new Mesh("player mesh", scene);
             container.meshes.map((m: AbstractMesh) => {
-                person.addChild(m);
+                player.addChild(m);
             });
             const SCALE = 0.16;
-            person.scaling = new Vector3(SCALE, SCALE, SCALE);
+            player.scaling = new Vector3(SCALE, SCALE, SCALE);
 
-            player_d = person.clone("Defendant");
+            player_d = player.clone("Defendant");
             player_d.rotate(Vector3.Up(), 2.7);
             player_d.position = PLAYER_D_POS;
 
-            player_p = person.clone("Prosecutor");
+            player_p = player.clone("Prosecutor");
             player_p.rotate(Vector3.Up(), -2.7);
             player_p.position = PLAYER_P_POS;
         }
@@ -163,17 +167,20 @@ export default function SceneDisplay({
                 return;
             }
             const cur_phase = phase;
-            //console.log(cur_phase, cur_turn);
             switch (cur_phase) {
                 case GamePhase.MAIN_MENU:
                     camera_i = 0;
                     if (cur_phase != lastPhase) {
                         judge_idle_anim.play();
+                        console.debug("menu");
                     }
                     break;
                 case GamePhase.JUDGE_TALKING:
                     if (cur_phase != lastPhase) {
+                        judge_idle_anim.pause();
                         judge_talking_anim.play();
+
+                        console.debug("judge talking");
                     }
                     camera_i = 1;
                     break;
@@ -181,19 +188,22 @@ export default function SceneDisplay({
                     camera_i = 2;
                     if (cur_phase != lastPhase) {
                         judge_idle_anim.play();
+                        console.debug("dfense talking");
                     }
                     break;
                 case GamePhase.PROSECUTOR_TALKING:
                     camera_i = 3;
                     if (cur_phase != lastPhase) {
                         judge_idle_anim.play();
+                        console.debug("prosecutor");
                     }
                     break;
             }
+            lastPhase = phase;
 
             const { pos, look_at } = camera_positions[camera_i];
-            camera.position = Vector3.Lerp(camera.position, pos, 0.05);
-            camera.target = Vector3.Lerp(camera.target, look_at, 0.05);
+            camera.position = Vector3.Lerp(camera.position, pos, 0.04);
+            camera.target = Vector3.Lerp(camera.target, look_at, 0.04);
         },
         [phase]
     );

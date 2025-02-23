@@ -1,134 +1,137 @@
 /* Global styles */
 body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Roboto', sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    font-family: "Roboto", sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #f0f0f0;
 }
 
 .card-header {
-  color: rgb(207, 202, 202);
+    color: rgb(207, 202, 202);
 }
 
 /* Container for the player page */
 .player-container {
-  max-width: 900px;
-  margin: 50px auto;
-  padding: 20px;
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
 }
 
 /* Header styling */
 header h1 {
-  text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 30px;
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
 }
 
 /* Card styling for sections */
 .card {
-  background-color: rgba(40, 44, 52, 0.85);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    background-color: rgba(40, 44, 52, 0.85);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 /* Join section specific styles */
 .join-section {
-  text-align: center;
+    text-align: center;
 }
 
 .input-group {
-  margin-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 .input-group input {
-  width: 80%;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
+    width: 80%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
 }
 
 /* Textarea styling */
 textarea {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  resize: vertical;
-  margin-bottom: 15px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    resize: vertical;
+    margin-bottom: 15px;
 }
 
 /* Button styling */
 .btn {
-  display: inline-block;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+    display: inline-block;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition:
+        background 0.3s ease,
+        transform 0.2s ease;
 }
 
 .btn:hover {
-  transform: translateY(-2px);
+    transform: translateY(-2px);
 }
 
 /* Button variants */
 .btn.primary {
-  background-color: #1e90ff;
-  color: #fff;
+    background-color: #1e90ff;
+    color: #fff;
 }
 
 .btn.success {
-  background-color: #28a745;
-  color: #fff;
+    background-color: #28a745;
+    color: #fff;
 }
 
 .btn:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
+    background-color: #6c757d;
+    cursor: not-allowed;
 }
 
 /* Welcome section styling */
 .welcome-section {
-  text-align: center;
-  margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 /* Transcript list styling */
 .transcript-section ul {
-  list-style: none;
-  padding: 0;
+    list-style: none;
+    padding: 0;
 }
 
 .transcript-section li {
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .transcript-section li:last-child {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 .list-group-item {
-  background-color: rgba(40, 44, 52, 0);
-  border: none;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 5px;
-  color: rgb(207, 202, 202);
+    background-color: rgba(40, 44, 52, 0);
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 5px;
+    color: rgb(207, 202, 202);
 }
 
 .card-title {
-  color: rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
 }
 
 .circuit-court-title {
-  font-weight: bold;
-  text-shadow: -5px 5px 5px rgba(0, 0, 0, 1),
-    -5px 5px 5px rgba(0, 0, 0, 1);
+    font-weight: bold;
+    text-shadow:
+        -5px 5px 5px rgba(0, 0, 0, 1),
+        -5px 5px 5px rgba(0, 0, 0, 1);
 }

@@ -18,7 +18,6 @@ export default function App() {
     const [roundNumber, setRoundNumber] = useState(0);
     const [joinCode, setJoinCode] = useState<string>("");
     const [players, setPlayers] = useState<Role[]>([]);
-    const [turnOrder, setTurnOrder] = useState<string[]>([]);
     const [activeRole, setActiveRole] = useState<Role>(null);
     const [gameOverText, setGameOverText] = useState("");
 
@@ -93,7 +92,6 @@ export default function App() {
             console.log("Game started", data);
             setGameStarted(true);
             setPlayers(data.players);
-            setTurnOrder(data.turnOrder);
 
             transcriptAppend({
                 role: "Judge",
@@ -206,7 +204,7 @@ export default function App() {
             <div className="w-screen h-screen flex flex-col items-center">
                 {!gameStarted ? (
                     <>
-                        <h1 className="text-7xl font-big text-center m-10 bg-[#7CAFC4] w-full p-2 border-[#EBB010] border-y-8 shadow-lg">
+                        <h1 className="text-7xl font-bold text-center m-10 bg-[#7CAFC4] w-full p-2 border-[#EBB010] border-y-8 shadow-lg">
                             Circuit Court
                         </h1>
                         <div className="h-[40%]"></div>
@@ -243,7 +241,7 @@ export default function App() {
                                 Round {roundNumber} -{" "}
                                 {transcript.length % 3 == 0 &&
                                 transcript.length != 0 ? (
-                                    <span>Judge Jason is deliberating...</span>
+                                    <span>Judge Json is deliberating...</span>
                                 ) : (
                                     <span>
                                         Make your argument,{" "}

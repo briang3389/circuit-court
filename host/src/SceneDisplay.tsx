@@ -2,7 +2,6 @@ import { useEffect, useRef, CanvasHTMLAttributes, useCallback } from "react";
 import {
     Color4,
     Color3,
-    AnimationGroup,
     AbstractMesh,
     DirectionalLight,
     FreeCamera,
@@ -26,15 +25,12 @@ type CameraPos = {
 const SUN_DIR = new Vector3(1, -3, -1).normalize();
 
 let initialized: boolean = false;
-let lastPhase: GamePhase = GamePhase.MAIN_MENU;
 
 let camera: FreeCamera;
 const camera_positions: CameraPos[] = [];
 let camera_i = 0;
 
 let judge: Mesh;
-let judge_idle_anim: AnimationGroup;
-let judge_talking_anim: AnimationGroup;
 
 let player_d: Mesh;
 let player_p: Mesh;
@@ -97,11 +93,11 @@ export default function SceneDisplay({
             judge.scalingDeterminant = 1.35;
 
             // animations
-            judge_idle_anim = container.animationGroups[0];
+            /*judge_idle_anim = container.animationGroups[0];
             judge_idle_anim.loopAnimation = true;
             judge_idle_anim.play(true);
             judge_talking_anim = container.animationGroups[1];
-            judge_talking_anim.loopAnimation = true;
+            judge_talking_anim.loopAnimation = true;*/
 
             container.addAllToScene();
         }
@@ -169,32 +165,18 @@ export default function SceneDisplay({
             const cur_phase = phase;
             switch (cur_phase) {
                 case GamePhase.MAIN_MENU:
-                    camera_i = 0;
-                    if (cur_phase != lastPhase) {
-                        judge_idle_anim.play();
-                    }
+                    camera_i = 0; // TODO change
                     break;
                 case GamePhase.JUDGE_TALKING:
-                    if (cur_phase != lastPhase) {
-                        judge_idle_anim.pause();
-                        judge_talking_anim.play();
-                    }
                     camera_i = 1;
                     break;
                 case GamePhase.DEFENSE_TALKING:
                     camera_i = 2;
-                    if (cur_phase != lastPhase) {
-                        judge_idle_anim.play();
-                    }
                     break;
                 case GamePhase.PROSECUTOR_TALKING:
                     camera_i = 3;
-                    if (cur_phase != lastPhase) {
-                        judge_idle_anim.play();
-                    }
                     break;
             }
-            lastPhase = phase;
 
             const { pos, look_at } = camera_positions[camera_i];
             camera.position = Vector3.Lerp(camera.position, pos, 0.04);

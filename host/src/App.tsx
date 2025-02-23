@@ -6,7 +6,7 @@ import { GamePhase, Role, Speaker } from "./types";
 import SceneDisplay from "./SceneDisplay";
 
 // host backend socket
-const socket = io("http://localhost:5000");
+const socket = io(`http://${import.meta.env.VITE_HOST_URL}:5000`);
 
 type TranscriptEntry = {
     role: Speaker;
@@ -35,45 +35,45 @@ export default function App() {
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
-    
+
         const handlePlaying = () => {
-          if (!musicAllowed) {
-            setMusicAllowed(true);
-          }
+            if (!musicAllowed) {
+                setMusicAllowed(true);
+            }
         };
-    
+
         audio.addEventListener("playing", handlePlaying);
-    
+
         return () => {
-          audio.removeEventListener("playing", handlePlaying);
+            audio.removeEventListener("playing", handlePlaying);
         };
-      }, [musicAllowed]);
+    }, [musicAllowed]);
 
     useEffect(() => {
         if (audioRef.current && musicAllowed) {
-          // Pause current playback.
-          audioRef.current.pause();
-    
-          // Set source based on the gameStarted state.
-          audioRef.current.src = gameStarted ? "/game_music.mp3" : "/lobby_music.mp3";
-    
-          // Reload the new source and play.
-          audioRef.current.load();
-          audioRef.current.play().catch((err) =>
-            console.log("Playback prevented:", err)
-          );
+            // Pause current playback.
+            audioRef.current.pause();
+
+            // Set source based on the gameStarted state.
+            audioRef.current.src = gameStarted ? "/game_music.mp3" : "/lobby_music.mp3";
+
+            // Reload the new source and play.
+            audioRef.current.load();
+            audioRef.current.play().catch((err) =>
+                console.log("Playback prevented:", err)
+            );
         }
-      }, [gameStarted, musicAllowed]);
-    
+    }, [gameStarted, musicAllowed]);
+
     const handleMusicStart = () => {
         setMusicAllowed(true);
         // Attempt to play the current track immediately.
         if (audioRef.current) {
-          audioRef.current
-            .play()
-            .catch((err) => console.log("Playback prevented:", err));
+            audioRef.current
+                .play()
+                .catch((err) => console.log("Playback prevented:", err));
         }
-      };
+    };
 
     useEffect(() => {
         socket.emit("createSession");
@@ -179,19 +179,19 @@ export default function App() {
             <audio ref={audioRef} loop />
             {!musicAllowed && (
                 <div
-                onClick={handleMusicStart}
-                style={{
-                    position: "absolute",
-                    top: 10,
-                    left: 10,
-                    cursor: "pointer",
-                    zIndex: 1000,
-                    backgroundColor: "rgba(255,255,255,0.7)",
-                    padding: "5px",
-                    borderRadius: "50%",
-                }}
+                    onClick={handleMusicStart}
+                    style={{
+                        position: "absolute",
+                        top: 10,
+                        left: 10,
+                        cursor: "pointer",
+                        zIndex: 1000,
+                        backgroundColor: "rgba(255,255,255,0.7)",
+                        padding: "5px",
+                        borderRadius: "50%",
+                    }}
                 >
-                🔇
+                    🔇
                 </div>
             )}
             <SceneDisplay
@@ -234,7 +234,7 @@ export default function App() {
                         <div className="bg-blue-300 px-8 py-3 my-3 text-3xl rounded-2xl">
                             Round {roundNumber} -{" "}
                             {transcript.length % 3 == 0 &&
-                            transcript.length != 0 ? (
+                                transcript.length != 0 ? (
                                 <span>Judge Jason is deliberating...</span>
                             ) : (
                                 <span>

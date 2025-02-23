@@ -8,5 +8,7 @@
             "path": "./tsconfig.node.json"
         }
     ],
-    "compilerOptions": {}
+    "compilerOptions": {
+        "types": ["node", "vitest/globals"]
+    }
 }

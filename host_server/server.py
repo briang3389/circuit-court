@@ -307,10 +307,11 @@ def handle_submit_evidence(data):
 
 def conclude_game(join_code):
     session = sessions.get(join_code)
+    next_active = session["turn_order"][session["submissionCount"] % 2]
     socketio.emit(
         "turnUpdate",
         {
-            "activeRole": "",
+            "activeRole": next_active,
             "transcript": session["transcript"],
             "round": 3,
         },

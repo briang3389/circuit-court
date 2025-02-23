@@ -1,6 +1,4 @@
 
-*.blend
-*.blend1
 .env
 
 __pycache__/

@@ -11,7 +11,6 @@ const socket = io("http://localhost:5000");
 type TranscriptEntry = {
     role: Speaker;
     text: string;
-    t: number;
 };
 
 export default function App() {
@@ -50,7 +49,6 @@ export default function App() {
             transcriptAppend({
                 role: "Judge",
                 text: data.scenario,
-                t: Date.now(),
             });
         });
 
@@ -65,20 +63,17 @@ export default function App() {
                     transcriptAppend({
                         role: "Defense",
                         text: text,
-                        t: Date.now(),
                     });
                 } else if (data.activeRole == "Defense") {
                     transcriptAppend({
                         role: "Prosecutor",
                         text: text,
-                        t: Date.now(),
                     });
                 } else {
                     // last
                     transcriptAppend({
                         role: "Judge",
                         text: text,
-                        t: Date.now(),
                     });
                 }
             }
@@ -99,7 +94,6 @@ export default function App() {
             transcriptAppend({
                 role: "Judge",
                 text: data.llmThoughts,
-                t: Date.now(),
             });
 
             //queueMessage(data.llmThoughts, "Judge");
@@ -111,7 +105,6 @@ export default function App() {
             transcriptAppend({
                 role: "Judge",
                 text: data.verdict,
-                t: Date.now(),
             });
         });
 

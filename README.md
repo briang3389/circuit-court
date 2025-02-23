@@ -58,6 +58,7 @@ View from the player's mobile device
 
 ![Mobile view](https://github.com/jaxsonp/circuit-court/blob/main/media/phone-1.png?raw=true)
 
+[Devpost Submission](https://devpost.com/software/circuit-court)
 
 ## Credits
 

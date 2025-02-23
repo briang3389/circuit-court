@@ -59,7 +59,7 @@ function Player() {
 
     return (
         <div className="container mt-4">
-            <h1 className="mb-4 circuit-court-title">Circuit Court – Player</h1>
+            <h1 className="mb-4 circuit-court-title">Circuit Court</h1>
             {!joined ? (
                 <div className="card p-4">
                     <h2 className="card-title mb-3">Join Game</h2>

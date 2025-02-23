@@ -20,6 +20,7 @@ client = OpenAI(api_key=os.environ.get("API_KEY"), base_url=os.environ.get("LLM_
 
 
 def query_llm(history):
+    return "LLM RESPONSE"
     response = client.chat.completions.create(
         messages=history,
         model="neuralmagic/Meta-Llama-3.1-8B-Instruct-quantized.w4a16",
@@ -233,18 +234,6 @@ def handle_submit_evidence(data):
 
     # Check if the round is complete (i.e. both players have submitted).
     if session["submissionCount"] % 2 == 0:
-        # End of round: compute interim opinion.
-        if current_round != NUM_ROUNDS_PER_GAME:
-            interim_opinion = llm_interim(session)
-            socketio.emit(
-                "roundUpdate",
-                {
-                    "transcript": session["transcript"],
-                    "round": current_round,
-                    "llmThoughts": interim_opinion,
-                },
-                room=join_code,
-            )
         # Continue to next round if game is not over (limit to 2 rounds here).
         if current_round < NUM_ROUNDS_PER_GAME:
             session["round"] += 1
@@ -261,6 +250,19 @@ def handle_submit_evidence(data):
             print(f"Next round {session['round']} starting, active role: {next_active}")
         else:
             conclude_game(join_code)
+
+        # End of round: compute interim opinion.
+        if current_round != NUM_ROUNDS_PER_GAME:
+            interim_opinion = llm_interim(session)
+            socketio.emit(
+                "roundUpdate",
+                {
+                    "transcript": session["transcript"],
+                    "round": current_round,
+                    "llmThoughts": interim_opinion,
+                },
+                room=join_code,
+            )
     else:
         # If the round is not yet complete, update the active turn.
         next_active = session["turn_order"][session["submissionCount"] % 2]

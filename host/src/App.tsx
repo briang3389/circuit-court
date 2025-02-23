@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import io from "socket.io-client";
 
-import { GamePhase } from "./types";
+import { GamePhase, Role, Speaker } from "./types";
 
 import SceneDisplay from "./SceneDisplay";
 
@@ -9,152 +9,146 @@ import SceneDisplay from "./SceneDisplay";
 const socket = io("http://localhost:5000");
 
 type TranscriptEntry = {
-  role: string;
-  text: string;
-  round: number;
+    role: string;
+    text: string;
+};
+
+type Message = {
+    text: string;
+    speaker: Speaker;
 };
 
 export default function App() {
-  const [phase, setPhase] = useState<GamePhase>(GamePhase.MAIN_MENU);
-  const [joinCode, setJoinCode] = useState("");
-  const [players, setPlayers] = useState([]);
-  const [scenario, setScenario] = useState("");
-  const [turnOrder, setTurnOrder] = useState<string[]>([]);
-  const [transcript, setTranscript] = useState<TranscriptEntry[]>([]);
-  //const [currentRound, setCurrentRound] = useState(0);
-  const [llmThoughts, setLlmThoughts] = useState("");
-  const [finalVerdict, setFinalVerdict] = useState("");
-  const [activeRole, setActiveRole] = useState("");
+    const [phase, setPhase] = useState<GamePhase>(GamePhase.MAIN_MENU);
+    const [joinCode, setJoinCode] = useState<string>("");
+    const [players, setPlayers] = useState([]);
+    const [turnOrder, setTurnOrder] = useState<string[]>([]);
+    const [activeRole, setActiveRole] = useState<Role>(null);
 
-  useEffect(() => {
-    socket.emit("createSession");
-    setPhase(GamePhase.MAIN_MENU);
+    const [transcript, setTranscript] = useState<TranscriptEntry[]>([]);
+    const transcriptAppend = useCallback((entry: TranscriptEntry) => {
+        setTranscript((t) => [...t, entry]);
+    }, []);
 
-    socket.on("sessionCreated", (data) => {
-      setJoinCode(data.joinCode);
-    });
+    const [speechText, setSpeechText] = useState<string | null>(null);
 
-    socket.on("playerJoined", (data) => {
-      setPlayers(data);
-    });
+    useEffect(() => {
+        socket.emit("createSession");
 
-    socket.on("gameStarted", (data) => {
-      setScenario(data.scenario);
-      setPlayers(data.players);
-      setTurnOrder(data.turnOrder);
-    });
+        socket.on("sessionCreated", (data) => {
+            setJoinCode(data.joinCode);
+        });
 
-    socket.on("turnUpdate", (data) => {
-      setActiveRole(data.activeRole);
-      setTranscript(data.transcript);
-      //setCurrentRound(data.round);
-    });
+        socket.on("playerJoined", (data) => {
+            setPlayers(data);
+        });
 
-    socket.on("roundUpdate", (data) => {
-      //setCurrentRound(data.round);
-      setLlmThoughts(data.llmThoughts);
-      setTranscript(data.transcript);
-    });
+        socket.on("gameStarted", (data) => {
+            console.log("Game started", data);
+            setPlayers(data.players);
+            setTurnOrder(data.turnOrder);
 
-    socket.on("finalVerdict", (data) => {
-      setFinalVerdict(data.verdict);
-      setTranscript(data.transcript);
-    });
+            transcriptAppend({ role: "Judge", text: data.scenario });
+        });
 
-    return () => {
-      socket.off();
-    };
-  }, []);
+        socket.on("turnUpdate", (data) => {
+            console.log("Turn update", data);
 
-  function render_ui(state: GamePhase) {
-    switch (state) {
-      case GamePhase.MAIN_MENU:
-        return <h1 className="text-7xl">Circuit Court</h1>;
-    }
-  }
+            if (data.transcript.length > 0) {
+                const text = data.transcript[data.transcript.length - 1].text;
+                if (data.activeRole == "Prosecutor") {
+                    transcriptAppend({ role: "Defense", text: text });
+                } else if (data.activeRole == "Defense") {
+                    transcriptAppend({ role: "Prosecutor", text: text });
+                } else {
+                    console.error("Erm", data);
+                }
+            }
+            /*if (activeRole == "Defense") {
+                queueMessage(msg, "Defense");
+            } else if (activeRole == "Prosecutor") {
+                queueMessage(msg, "Prosecutor");
+            }*/
 
-  return (
-    <>
-      <SceneDisplay
-        className="w-screen h-screen -z-10 absolute"
-        phase={phase}
-      />
-      {render_ui(phase)}
-      <div className="p-5">
-        <h1>Courtroom Showdown – Host</h1>
-        <section>
-          <h2>Session Details</h2>
-          <p>
-            <strong>Join Code (Session ID):</strong> {joinCode}
-          </p>
-        </section>
+            setActiveRole(data.activeRole);
+            //setCurrentRound(data.round);
+        });
 
-        <section>
-          <h2>Players</h2>
-          <ul>
-            {players.map((role, idx) => (
-              <li key={idx}>{role}</li>
-            ))}
-          </ul>
-        </section>
+        socket.on("roundUpdate", (data) => {
+            console.log("Round update", data.transcript);
+            //setCurrentRound(data.round);
 
-        {scenario && (
-          <section>
-            <h2>Case Scenario</h2>
-            <p>{scenario}</p>
-          </section>
-        )}
+            transcriptAppend({ role: "Judge", text: data.llmThoughts });
 
-        {turnOrder.length > 0 && (
-          <section>
-            <h2>Turn Order</h2>
-            <ol>
-              {turnOrder.map((role, idx) => (
-                <li key={idx}>{role}</li>
-              ))}
-            </ol>
-          </section>
-        )}
+            //queueMessage(data.llmThoughts, "Judge");
+        });
 
-        <section>
-          <h2>Transcript</h2>
-          {transcript.length === 0 ? (
-            <p>No submissions yet.</p>
-          ) : (
-            <ul>
-              {transcript.map((entry, idx) => (
-                <li key={idx}>
-                  <strong>
-                    Round {entry.round} – {entry.role}:
-                  </strong>{" "}
-                  {entry.text}
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+        socket.on("finalVerdict", (data) => {
+            console.log("Final verdict!", data);
 
-        {llmThoughts && (
-          <section>
-            <h2>LLM Interim Opinion</h2>
-            <p>{llmThoughts}</p>
-          </section>
-        )}
+            const text = data.transcript[data.transcript.length - 1].text;
+            const role = data.transcript[data.transcript.length - 1].role;
+            transcriptAppend({ role: role, text: text });
 
-        {finalVerdict && (
-          <section>
-            <h2>Final Verdict</h2>
-            <p>{finalVerdict}</p>
-          </section>
-        )}
+            transcriptAppend({ role: "Judge", text: data.verdict });
+        });
 
-        <section>
-          <h2>Current Turn</h2>
-          <p>
-            <strong>Active Role:</strong> {activeRole}
-          </p>
-        </section>
-      </div>
-    </>
-  );
+        return () => {
+            socket.off();
+        };
+    }, [transcriptAppend]);
+
+    useEffect(() => {
+        console.log("Transcript updated:", transcript);
+    }, [transcript]);
+
+    return (
+        <>
+            <SceneDisplay
+                className="w-screen h-screen -z-10 absolute"
+                phase={phase}
+            />
+            <div className="p-5">
+                <h1>Courtroom Showdown – Host</h1>
+                <section>
+                    <h2>Session Details</h2>
+                    <p>
+                        <strong>Join Code (Session ID):</strong> {joinCode}
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Players</h2>
+                    <ul>
+                        {players.map((role, idx) => (
+                            <li key={idx}>{role}</li>
+                        ))}
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Transcript</h2>
+                    {transcript.length === 0 ? (
+                        <p>No submissions yet.</p>
+                    ) : (
+                        <ul>
+                            {transcript.map((entry, idx) => (
+                                <li key={idx}>
+                                    <strong>Round N - {entry.role}:</strong>{" "}
+                                    {entry.text}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </section>
+
+                <section>
+                    <h2>Current Turn</h2>
+                    <p>
+                        <strong>Active Role:</strong> {activeRole}
+                    </p>
+                </section>
+            </div>
+        </>
+    );
 }

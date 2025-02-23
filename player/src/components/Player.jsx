@@ -88,29 +88,25 @@ function Player() {
                         </p>
                     </div>
 
-                    <div className="card mb-4">
-                        <div className="card-header">
-                            Submit Evidence/Argument
-                        </div>
-                        <div className="card-body">
-                            <textarea
-                                rows="4"
-                                placeholder="Enter your evidence or argument..."
-                                value={evidenceText}
-                                onChange={(e) =>
-                                    setEvidenceText(e.target.value)
-                                }
-                                className="form-control mb-3"
-                            />
-                            <button
-                                onClick={handleSubmitEvidence}
-                                disabled={!isMyTurn}
-                                className="btn btn-success"
-                            >
-                                Submit
-                            </button>
-                        </div>
-                    </div>
+          <div className="card mb-4">
+            <div className="card-header">Submit Evidence/Argument</div>
+            <div className="card-body">
+              <textarea
+                rows="3"
+                placeholder="Enter your evidence or argument..."
+                value={evidenceText}
+                onChange={(e) => setEvidenceText(e.target.value)}
+                className="form-control mb-3"
+              />
+              <button
+                onClick={handleSubmitEvidence}
+                disabled={!isMyTurn}
+                className="btn btn-success"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
 
                     <div className="card mb-4">
                         <div className="card-header">Transcript</div>

@@ -6,7 +6,7 @@ import { GamePhase, Role, Speaker } from "./types";
 import SceneDisplay from "./SceneDisplay";
 
 // host backend socket
-const socket = io("http://localhost:5000");
+const socket = io(`http://${import.meta.env.VITE_HOST_URL}:5000`);
 
 type TranscriptEntry = {
     role: Speaker;

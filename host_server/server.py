@@ -24,11 +24,15 @@ client = OpenAI(api_key=os.environ.get("API_KEY"), base_url=os.environ.get("LLM_
 
 
 def query_llm(history):
-    response = client.chat.completions.create(
-        messages=history,
-        model="neuralmagic/Meta-Llama-3.1-8B-Instruct-quantized.w4a16",
-    )
-    return response.choices[0].message.content
+    while True:
+        response = client.chat.completions.create(
+            messages=history,
+            model="neuralmagic/Meta-Llama-3.1-8B-Instruct-quantized.w4a16",
+        )
+        text = response.choices[0].message.content
+        if len(text.split()) < 300:
+            break
+    return text
 
 
 def add_context(content, session, role="user"):
@@ -51,7 +55,7 @@ sessions = {}
 
 
 def generate_join_code():
-    return "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    return "".join(random.choices(string.digits, k=4))
 
 
 def llm_get_winner(session):

@@ -48,9 +48,9 @@ Example scenario
 
 ![Example scenario](https://github.com/jaxsonp/circuit-court/blob/main/media/circuit-court-2.png?raw=true)
 
-Defense lawyer making his case
+Players making their case
 
-![Prosecution](https://github.com/jaxsonp/circuit-court/blob/main/media/circuit-court-4.png?raw=true)
+![Prosecution](https://github.com/jaxsonp/circuit-court/blob/main/media/circuit-court-3.png?raw=true)
 
 ![Defense](https://github.com/jaxsonp/circuit-court/blob/main/media/circuit-court-4.png?raw=true)
 

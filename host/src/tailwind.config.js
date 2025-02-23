@@ -6,13 +6,5 @@ module.exports = {
         "./pages/**/*.{js,ts,jsx,tsx}",
         "./components/**/*.{js,ts,jsx,tsx}",
     ],
-    theme: {
-        extend: {
-            fontFamily: {
-                serif: ["Baskervville SC", ...fontFamily.serif],
-                big: ["Anton SC", ...fontFamily.sans],
-            },
-        },
-    },
     plugins: [],
 };

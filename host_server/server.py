@@ -1,6 +1,7 @@
 # server.py
 
 import eventlet
+
 eventlet.monkey_patch()
 
 import os
@@ -51,6 +52,22 @@ sessions = {}
 
 def generate_join_code():
     return "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+
+def llm_get_winner(session):
+    add_context(
+        (
+            "Based on your final verdict, who won the case? "
+            "Respond only with 'Prosecutor' or 'Defense', without the quotes. "
+            "Nothing else should be in your response. "
+            "No matter what, you MUST choose Prosecutor or Defense, even if you think neither of them won."
+        ),
+        session,
+    )
+    winner = query_llm(session["history"]).strip()
+    if winner not in ["Prosecutor", "Defense"]:
+        winner = random.choice(["Prosecutor", "Defense"])
+    return winner
 
 
 def llm_scenario(session):
@@ -294,9 +311,14 @@ def conclude_game(join_code):
     )
     time.sleep(DELIBERATION_TIME)
     final_verdict = llm_verdict(session)
+    winner = llm_get_winner(session)
     socketio.emit(
         "finalVerdict",
-        {"verdict": final_verdict, "transcript": session["transcript"]},
+        {
+            "verdict": final_verdict,
+            "transcript": session["transcript"],
+            "winner": winner,
+        },
         room=join_code,
     )
     print(f"Game concluded for session {join_code}. Final verdict: {final_verdict}")

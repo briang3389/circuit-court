@@ -1,15 +1,18 @@
 # server.py
 
 import eventlet
-
 eventlet.monkey_patch()
+
+import os
+import time
 
 from flask import Flask, request
 from flask_socketio import SocketIO, join_room, emit
 import random, string
 from openai import OpenAI
 from dotenv import load_dotenv
-import os
+
+DELIBERATION_TIME = 5
 
 load_dotenv()
 app = Flask(__name__)
@@ -20,7 +23,6 @@ client = OpenAI(api_key=os.environ.get("API_KEY"), base_url=os.environ.get("LLM_
 
 
 def query_llm(history):
-    return "LLM RESPONSE"
     response = client.chat.completions.create(
         messages=history,
         model="neuralmagic/Meta-Llama-3.1-8B-Instruct-quantized.w4a16",
@@ -253,6 +255,7 @@ def handle_submit_evidence(data):
 
         # End of round: compute interim opinion.
         if current_round != NUM_ROUNDS_PER_GAME:
+            time.sleep(DELIBERATION_TIME)
             interim_opinion = llm_interim(session)
             socketio.emit(
                 "roundUpdate",
@@ -280,6 +283,16 @@ def handle_submit_evidence(data):
 
 def conclude_game(join_code):
     session = sessions.get(join_code)
+    socketio.emit(
+        "turnUpdate",
+        {
+            "activeRole": "",
+            "transcript": session["transcript"],
+            "round": 3,
+        },
+        room=join_code,
+    )
+    time.sleep(DELIBERATION_TIME)
     final_verdict = llm_verdict(session)
     socketio.emit(
         "finalVerdict",

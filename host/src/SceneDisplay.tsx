@@ -18,6 +18,29 @@ import {
 import { registerBuiltInLoaders } from "@babylonjs/loaders/dynamic";
 import { GamePhase } from "./types";
 
+type CameraPos = {
+    pos: Vector3;
+    look_at: Vector3;
+};
+
+const SUN_DIR = new Vector3(1, -3, -1).normalize();
+
+let initialized: boolean = false;
+let lastPhase: GamePhase = GamePhase.MAIN_MENU;
+
+let camera: FreeCamera;
+const camera_positions: CameraPos[] = [];
+let camera_i = 0;
+
+let judge: Mesh;
+let judge_idle_anim: AnimationGroup;
+let judge_talking_anim: AnimationGroup;
+
+let player_d: Mesh;
+const PLAYER_D_POS = new Vector3(-14, 0, 7);
+let player_p: Mesh;
+const PLAYER_P_POS = new Vector3(14, 0, 7);
+
 export default function SceneDisplay({
     className,
     phase,
@@ -144,15 +167,27 @@ export default function SceneDisplay({
             switch (cur_phase) {
                 case GamePhase.MAIN_MENU:
                     camera_i = 0;
+                    if (cur_phase != lastPhase) {
+                        judge_idle_anim.play();
+                    }
                     break;
                 case GamePhase.JUDGE_TALKING:
+                    if (cur_phase != lastPhase) {
+                        judge_talking_anim.play();
+                    }
                     camera_i = 1;
                     break;
                 case GamePhase.DEFENSE_TALKING:
                     camera_i = 2;
+                    if (cur_phase != lastPhase) {
+                        judge_idle_anim.play();
+                    }
                     break;
                 case GamePhase.PROSECUTOR_TALKING:
                     camera_i = 3;
+                    if (cur_phase != lastPhase) {
+                        judge_idle_anim.play();
+                    }
                     break;
             }
 
@@ -173,28 +208,6 @@ export default function SceneDisplay({
         />
     );
 }
-
-type CameraPos = {
-    pos: Vector3;
-    look_at: Vector3;
-};
-
-const SUN_DIR = new Vector3(1, -3, -1).normalize();
-
-let initialized: boolean = false;
-
-let camera: FreeCamera;
-const camera_positions: CameraPos[] = [];
-let camera_i = 0;
-
-let judge: Mesh;
-let judge_idle_anim: AnimationGroup;
-let judge_talking_anim: AnimationGroup;
-
-let player_d: Mesh;
-const PLAYER_D_POS = new Vector3(-14, 0, 7);
-let player_p: Mesh;
-const PLAYER_P_POS = new Vector3(14, 0, 7);
 
 function SceneRenderer({
     antialias,

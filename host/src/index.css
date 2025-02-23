@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:root {
+    @apply font-serif;
+}
+
 body {
     margin: 0;
     padding: 0;

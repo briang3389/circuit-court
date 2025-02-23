@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import io from "socket.io-client";
 
 import { GamePhase, Role, Speaker } from "./types";
@@ -28,6 +28,52 @@ export default function App() {
 
     const [phase, setPhase] = useState<GamePhase>(GamePhase.MAIN_MENU);
     const [speechText, setSpeechText] = useState<string | null>(null);
+
+    const [musicAllowed, setMusicAllowed] = useState(false);
+    const audioRef = useRef<HTMLAudioElement>(null);
+
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio) return;
+    
+        const handlePlaying = () => {
+          if (!musicAllowed) {
+            setMusicAllowed(true);
+          }
+        };
+    
+        audio.addEventListener("playing", handlePlaying);
+    
+        return () => {
+          audio.removeEventListener("playing", handlePlaying);
+        };
+      }, [musicAllowed]);
+
+    useEffect(() => {
+        if (audioRef.current && musicAllowed) {
+          // Pause current playback.
+          audioRef.current.pause();
+    
+          // Set source based on the gameStarted state.
+          audioRef.current.src = gameStarted ? "/game_music.mp3" : "/lobby_music.mp3";
+    
+          // Reload the new source and play.
+          audioRef.current.load();
+          audioRef.current.play().catch((err) =>
+            console.log("Playback prevented:", err)
+          );
+        }
+      }, [gameStarted, musicAllowed]);
+    
+    const handleMusicStart = () => {
+        setMusicAllowed(true);
+        // Attempt to play the current track immediately.
+        if (audioRef.current) {
+          audioRef.current
+            .play()
+            .catch((err) => console.log("Playback prevented:", err));
+        }
+      };
 
     useEffect(() => {
         socket.emit("createSession");
@@ -130,6 +176,24 @@ export default function App() {
 
     return (
         <>
+            <audio ref={audioRef} loop />
+            {!musicAllowed && (
+                <div
+                onClick={handleMusicStart}
+                style={{
+                    position: "absolute",
+                    top: 10,
+                    left: 10,
+                    cursor: "pointer",
+                    zIndex: 1000,
+                    backgroundColor: "rgba(255,255,255,0.7)",
+                    padding: "5px",
+                    borderRadius: "50%",
+                }}
+                >
+                🔇
+                </div>
+            )}
             <SceneDisplay
                 className="w-screen h-screen -z-10 absolute"
                 phase={phase}

@@ -123,3 +123,12 @@ textarea {
   color: rgb(207, 202, 202);
 }
 
+.card-title {
+  color: rgb(255, 255, 255);
+}
+
+.circuit-court-title {
+  font-weight: bold;
+  text-shadow: -5px 5px 5px rgba(0, 0, 0, 1),
+    -5px 5px 5px rgba(0, 0, 0, 1);
+}

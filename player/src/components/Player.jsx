@@ -59,7 +59,7 @@ function Player() {
 
     return (
         <div className="container mt-4">
-            <h1 className="mb-4">Circuit Court – Player</h1>
+            <h1 className="mb-4 circuit-court-title">Circuit Court – Player</h1>
             {!joined ? (
                 <div className="card p-4">
                     <h2 className="card-title mb-3">Join Game</h2>
@@ -73,7 +73,7 @@ function Player() {
                         />
                     </div>
                     <button onClick={handleJoin} className="btn btn-primary">
-                        Join Game
+                        Join
                     </button>
                 </div>
             ) : (
@@ -88,25 +88,25 @@ function Player() {
                         </p>
                     </div>
 
-          <div className="card mb-4">
-            <div className="card-header">Submit Evidence/Argument</div>
-            <div className="card-body">
-              <textarea
-                rows="3"
-                placeholder="Enter your evidence or argument..."
-                value={evidenceText}
-                onChange={(e) => setEvidenceText(e.target.value)}
-                className="form-control mb-3"
-              />
-              <button
-                onClick={handleSubmitEvidence}
-                disabled={!isMyTurn}
-                className="btn btn-success"
-              >
-                Submit
-              </button>
-            </div>
-          </div>
+                    <div className="card mb-4">
+                        <div className="card-header">Submit Evidence/Argument</div>
+                        <div className="card-body">
+                            <textarea
+                                rows="3"
+                                placeholder="Enter your evidence or argument..."
+                                value={evidenceText}
+                                onChange={(e) => setEvidenceText(e.target.value)}
+                                className="form-control mb-3"
+                            />
+                            <button
+                                onClick={handleSubmitEvidence}
+                                disabled={!isMyTurn}
+                                className="btn btn-success"
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    </div>
 
                     <div className="card mb-4">
                         <div className="card-header">Transcript</div>

@@ -172,15 +172,12 @@ export default function SceneDisplay({
                     camera_i = 0;
                     if (cur_phase != lastPhase) {
                         judge_idle_anim.play();
-                        console.debug("menu");
                     }
                     break;
                 case GamePhase.JUDGE_TALKING:
                     if (cur_phase != lastPhase) {
                         judge_idle_anim.pause();
                         judge_talking_anim.play();
-
-                        console.debug("judge talking");
                     }
                     camera_i = 1;
                     break;
@@ -188,14 +185,12 @@ export default function SceneDisplay({
                     camera_i = 2;
                     if (cur_phase != lastPhase) {
                         judge_idle_anim.play();
-                        console.debug("dfense talking");
                     }
                     break;
                 case GamePhase.PROSECUTOR_TALKING:
                     camera_i = 3;
                     if (cur_phase != lastPhase) {
                         judge_idle_anim.play();
-                        console.debug("prosecutor");
                     }
                     break;
             }

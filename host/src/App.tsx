@@ -20,6 +20,7 @@ export default function App() {
     const [players, setPlayers] = useState<Role[]>([]);
     const [turnOrder, setTurnOrder] = useState<string[]>([]);
     const [activeRole, setActiveRole] = useState<Role>(null);
+    const [gameOverText, setGameOverText] = useState("");
 
     const [transcript, setTranscript] = useState<TranscriptEntry[]>([]);
     const transcriptAppend = useCallback((entry: TranscriptEntry) => {
@@ -125,11 +126,6 @@ export default function App() {
                     });
                 }
             }
-            /*if (activeRole == "Defense") {
-                queueMessage(msg, "Defense");
-            } else if (activeRole == "Prosecutor") {
-                queueMessage(msg, "Prosecutor");
-            }*/
 
             setActiveRole(data.activeRole);
             setRoundNumber(data.round);
@@ -150,6 +146,14 @@ export default function App() {
         socket.on("finalVerdict", (data) => {
             console.log("Final verdict!", data);
 
+            if (data.winner == "Prosecutor") {
+                setGameOverText("Verdict: Guilty\nProsecutor Wins");
+            } else if (data.winner == "Defense") {
+                setGameOverText("Verdict: Not Guilty\nDefense Wins");
+            } else {
+                setGameOverText("Verdict: Draw\nTest");
+            }
+
             transcriptAppend({
                 role: "Judge",
                 text: data.verdict,
@@ -162,7 +166,6 @@ export default function App() {
     }, [transcriptAppend]);
 
     useEffect(() => {
-        console.log("Transcript updated:", transcript);
         if (transcript.length > 0) {
             const entry = transcript[transcript.length - 1];
             setSpeechText(entry.text);
@@ -203,7 +206,7 @@ export default function App() {
             <div className="w-screen h-screen flex flex-col items-center">
                 {!gameStarted ? (
                     <>
-                        <h1 className="text-7xl font-big text-center m-10 bg-[#7CAFC4] w-full p-2 border-amber-300 border-y-8">
+                        <h1 className="text-7xl font-big text-center m-10 bg-[#7CAFC4] w-full p-2 border-[#EBB010] border-y-8 shadow-lg">
                             Circuit Court
                         </h1>
                         <div className="h-[40%]"></div>
@@ -230,23 +233,41 @@ export default function App() {
                 ) : (
                     <>
                         <div className="m-4 px-8 py-6 bg-white rounded-[70px]">
-                            <p className="text-3xl leading-none indent-8">
+                            <p className="text-3xl leading-none">
                                 {speechText}
                             </p>
                         </div>
                         <div className="grow"></div>
-                        <div className="bg-[#7CAFC4] px-8 py-3 my-4 text-5xl rounded-2xl">
-                            Round {roundNumber} -{" "}
-                            {transcript.length % 3 == 0 &&
-                            transcript.length != 0 ? (
-                                <span>Judge Jason is deliberating...</span>
-                            ) : (
-                                <span>
-                                    Make your argument,{" "}
-                                    {activeRole?.toLowerCase()}
-                                </span>
-                            )}
-                        </div>
+                        {transcript.length != 10 ? (
+                            <div className="bg-[#7CAFC4] px-8 py-3 my-4 text-5xl rounded-2xl">
+                                Round {roundNumber} -{" "}
+                                {transcript.length % 3 == 0 &&
+                                transcript.length != 0 ? (
+                                    <span>Judge Jason is deliberating...</span>
+                                ) : (
+                                    <span>
+                                        Make your argument,{" "}
+                                        {activeRole?.toLowerCase()}
+                                    </span>
+                                )}
+                            </div>
+                        ) : (
+                            <>
+                                <div className="bg-[#7CAFC4] px-14 py-5 my-4 rounded-2xl">
+                                    {gameOverText.split("\n").map((str) => (
+                                        <p className="text-6xl">{str}</p>
+                                    ))}
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        window.location.reload();
+                                    }}
+                                    className="bg-[#7CAFC4] p-4 my-4 rounded-2xl text-5xl border-8 border-[#EBB010] italic shadow-xl border-double hover:border-solid"
+                                >
+                                    Take another case
+                                </button>
+                            </>
+                        )}
                     </>
                 )}
             </div>

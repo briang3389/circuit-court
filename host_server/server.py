@@ -88,7 +88,7 @@ def llm_scenario(session):
                     "Make it very short. "
                     "Do not give a title to it "
                     "Just state the situation between the two parties."
-                    "Make this very short."
+                    "Make this very short. I repeat, MAKE THIS VERY SHORT. Do not make this a long explanation, get to the point."
                 ),
             }
         ]

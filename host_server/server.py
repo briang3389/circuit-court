@@ -29,7 +29,7 @@ def query_llm(history):
             messages=history,
             model="neuralmagic/Meta-Llama-3.1-8B-Instruct-quantized.w4a16",
         )
-        text = response.choices[0].message.content
+        text = response.choices[0].message.content.replace("*", "").replace("_", "")
         if len(text.split()) < 300:
             break
     return text
@@ -88,6 +88,7 @@ def llm_scenario(session):
                     "Make it very short. "
                     "Do not give a title to it "
                     "Just state the situation between the two parties."
+                    "Make this very short."
                 ),
             }
         ]
@@ -149,6 +150,7 @@ def handle_create_session():
                 "for this verdict. "
                 "You will be told at each step what to reply with. "
                 "Keep it fun and lighthearted, not too serious. "
+                "Make every response very short."
             ),
         }
     ]

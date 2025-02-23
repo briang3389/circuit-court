@@ -90,7 +90,7 @@ function Player() {
             <div className="card-header">Submit Evidence/Argument</div>
             <div className="card-body">
               <textarea
-                rows="4"
+                rows="3"
                 placeholder="Enter your evidence or argument..."
                 value={evidenceText}
                 onChange={(e) => setEvidenceText(e.target.value)}

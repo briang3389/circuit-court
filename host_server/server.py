@@ -62,15 +62,16 @@ def llm_get_winner(session):
     add_context(
         (
             "Based on your final verdict, who won the case? "
-            "Respond only with 'Prosecutor' or 'Defense', without the quotes. "
-            "Nothing else should be in your response. "
-            "No matter what, you MUST choose Prosecutor or Defense, even if you think neither of them won."
+            "Respond only with 'Prosecutor', 'Defense', or 'Neither', without the quotes. "
+            "Choose Neither if you think that neither of them deserve to win the case. "
+            "Nothing else should be in your response. It should ONLY be one of those three words. "
+            "No matter what, you MUST choose Prosecutor, Defense, or Neither, even if you think neither of them won."
         ),
         session,
     )
     winner = query_llm(session["history"]).strip()
-    if winner not in ["Prosecutor", "Defense"]:
-        winner = random.choice(["Prosecutor", "Defense"])
+    if winner not in ["Prosecutor", "Defense", "Neither"]:
+        winner = random.choice(["Prosecutor", "Defense", "Neither"])
     return winner
 
 

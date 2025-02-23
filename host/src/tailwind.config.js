@@ -9,7 +9,7 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                serif: ["Baskerville SC", ...fontFamily.serif],
+                serif: ["Baskervville SC", ...fontFamily.serif],
                 big: ["Anton SC", ...fontFamily.sans],
             },
         },
